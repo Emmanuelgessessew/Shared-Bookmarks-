@@ -61,3 +61,32 @@ document.getElementById("user-select").addEventListener("change", function () {
   const selectedUserId = this.value;
   displayBookmarks(selectedUserId);
 });
+
+document.getElementById("bookmarkForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const url = document.getElementById("url").value.trim();
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const userId = document.getElementById("user-select").value;
+
+  if (!userId) {
+    alert("Please select a user first.");
+    return;
+  }
+
+  const newBookmark = {
+    url,
+    title,
+    description,
+    createdAt: new Date().toISOString(),
+  };
+
+  const existing = getData(userId) || [];
+  existing.push(newBookmark);
+  setData(userId, existing);
+
+  document.getElementById("bookmarkForm").reset();
+  displayBookmarks(userId);
+});
+
