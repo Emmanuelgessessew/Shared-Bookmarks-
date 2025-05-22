@@ -18,7 +18,7 @@ window.onload = function () {
   });
 };
 
-function displayBookmarks(userId) {
+export function displayBookmarks(userId) {
   const bookmarks = getData(userId) || [];
 
   const container = document.getElementById("bookmark-list");
