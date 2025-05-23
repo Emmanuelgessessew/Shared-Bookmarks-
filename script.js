@@ -1,28 +1,12 @@
-// This is a placeholder file which shows how you can access functions defined in other files.
-// It can be loaded into index.html.
-// You can delete the contents of the file once you have understood how it works.
-// Note that when running locally, in order to open a web page which uses modules, you must serve the directory over HTTP e.g. with https://www.npmjs.com/package/http-server
-// You can't open the index.html file using a file:// URL.
+// script.js
 
-import { getUserIds } from "./storage.js";
-
-window.onload = function () {
-  const users = getUserIds();
-  const userSelect = document.getElementById("userSelect");
-
-  users.forEach((userId) => {
-    const option = document.createElement("option");
-    option.value = userId;
-    option.textContent = `User ${userId}`;
-    userSelect.appendChild(option);
-  });
-};
+import { getUserIds, getData, setData } from "./storage.js";
 
 export function displayBookmarks(userId) {
   const bookmarks = getData(userId) || [];
 
   const container = document.getElementById("bookmark-list");
-  container.innerHTML = ""; // Clear old content
+  container.innerHTML = "";
 
   if (bookmarks.length === 0) {
     const msg = document.createElement("p");
@@ -31,7 +15,6 @@ export function displayBookmarks(userId) {
     return;
   }
 
-  // Reverse chronological order
   const sorted = bookmarks.slice().reverse();
 
   sorted.forEach((bookmark) => {
@@ -56,37 +39,47 @@ export function displayBookmarks(userId) {
   });
 }
 
-// Add listener to dropdown
-document.getElementById("user-select").addEventListener("change", function () {
-  const selectedUserId = this.value;
-  displayBookmarks(selectedUserId);
-});
+window.onload = () => {
+  const users = getUserIds();
+  const userSelect = document.getElementById("userSelect");
 
-document.getElementById("bookmarkForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+  users.forEach((userId) => {
+    const option = document.createElement("option");
+    option.value = userId;
+    option.textContent = `User ${userId}`;
+    userSelect.appendChild(option);
+  });
 
-  const url = document.getElementById("url").value.trim();
-  const title = document.getElementById("title").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const userId = document.getElementById("user-select").value;
+  document.getElementById("user-select").addEventListener("change", function () {
+    const selectedUserId = this.value;
+    displayBookmarks(selectedUserId);
+  });
 
-  if (!userId) {
-    alert("Please select a user first.");
-    return;
-  }
+  document.getElementById("bookmarkForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  const newBookmark = {
-    url,
-    title,
-    description,
-    createdAt: new Date().toISOString(),
-  };
+    const url = document.getElementById("url").value.trim();
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const userId = document.getElementById("user-select").value;
 
-  const existing = getData(userId) || [];
-  existing.push(newBookmark);
-  setData(userId, existing);
+    if (!userId) {
+      alert("Please select a user first.");
+      return;
+    }
 
-  document.getElementById("bookmarkForm").reset();
-  displayBookmarks(userId);
-});
+    const newBookmark = {
+      url,
+      title,
+      description,
+      createdAt: new Date().toISOString(),
+    };
 
+    const existing = getData(userId) || [];
+    existing.push(newBookmark);
+    setData(userId, existing);
+
+    document.getElementById("bookmarkForm").reset();
+    displayBookmarks(userId);
+  });
+};
